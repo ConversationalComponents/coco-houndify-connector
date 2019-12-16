@@ -1,6 +1,6 @@
 # CoCo Houndify Connector
 
-CoCo Houndify connector is a [Flask](http://flask.palletsprojects.com/en/1.1.x/ "Flask") application which allows you to expose your [Dialogflow](https://www.houndify.com/ "houndify") bots as a components at the [CoCo marketplace](https://marketplace.conversationalcomponents.com/ "CoCo marketplace").
+CoCo Houndify connector is a [Flask](http://flask.palletsprojects.com/en/1.1.x/ "Flask") application which allows you to expose your [Houndify](https://www.houndify.com/ "houndify") bots as a components at the [CoCo marketplace](https://marketplace.conversationalcomponents.com/ "CoCo marketplace").
 
 ### Deployment Flow:
 
