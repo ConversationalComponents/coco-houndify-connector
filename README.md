@@ -28,7 +28,7 @@ record for your component):
 ### 4. Map client commands to component states at config.py.
 
 config.py:
-'''
+```
     ACTIONS_MAPPING_CONFIG = {
         "default": {
             "COMPLETE_ACTION": "InformationCommand",
@@ -41,7 +41,7 @@ config.py:
             "OUT_OF_CONTEXT_ACTION": "NoResultCommand"
         }
     }
-'''
+```
 
 #### 5. Upload the Flask app to a cloud service.
 
