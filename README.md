@@ -15,3 +15,38 @@ record for your component):
 	- **Out Of Context** - Action which will be triggered when the conversation went out of context.
 5. Upload the Flask app to a cloud service(Google app engine is recommende - yaml file included.)
 
+
+
+
+#### 1. Create new client on Houndify.
+
+ ![Create a new client.](/Screenshots/1CreateClient.png)
+
+### 2,3. Create config for the component and place it at the components directory.
+ ![Create component config.](/Screenshots/2ComponentConfig.png)
+
+### 4. Map client commands to component states at config.py.
+
+config.py:
+'''
+    ACTIONS_MAPPING_CONFIG = {
+        "default": {
+            "COMPLETE_ACTION": "InformationCommand",
+            "FAILED_ACTION": "ErrorCommand",
+            "OUT_OF_CONTEXT_ACTION": "NoResultCommand"
+        },
+        "weather": {
+            "COMPLETE_ACTION": "InformationCommand",
+            "FAILED_ACTION": "ErrorCommand",
+            "OUT_OF_CONTEXT_ACTION": "NoResultCommand"
+        }
+    }
+'''
+
+#### 5. Upload the Flask app to a cloud service.
+
+ Open bash, configure gcloud tools and then run the following command:
+
+    `gcloud app deploy`
+
+
