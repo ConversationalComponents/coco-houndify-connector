@@ -1,10 +1,13 @@
+from enum import Enum
 import copy
+
 
 from config import ACTIONS_MAPPING_CONFIG
 
 
 # Consts.
 DEFAULT_CONFIG_KEY = "default"
+
 
 COCO_STANDARD_RESPONSE = {
     "action_name": "",
@@ -18,8 +21,46 @@ COCO_STANDARD_RESPONSE = {
 }
 
 
+class ComponentStatus(Enum):
+    DONE = "done"
+    FAILED = "failed"
+    OUT_OF_CONTEXT = "out_of_context"
+
+
 class ResponseHandlerException(Exception):
     pass
+
+
+def calculate_status_flags(json_result):
+    """
+    Calculate component status flags, depends on the result.
+
+    Arguments:
+        json_result: (dict) Raw JSON result.
+
+    Returns:
+        Status flags. (dict).
+    """
+    status = json_result.get("status")
+
+    component_done = False
+    component_failed = False
+    out_of_context = False
+
+    if status:
+        if ComponentStatus(status) == ComponentStatus.DONE:
+            component_done = True
+        if ComponentStatus(status) == ComponentStatus.FAILED:
+            component_done = True
+            component_failed = True
+        if ComponentStatus(status) == ComponentStatus.OUT_OF_CONTEXT:
+            out_of_context = True
+
+    return {
+        "component_done": component_done,
+        "component_failed": component_failed,
+        "out_of_context": out_of_context
+    }
 
 
 # functions
@@ -38,9 +79,6 @@ def handle(component_id, houndify_json_response, response_time_seconds=0.0):
     Returns:
         Result in a CoCo standard format. (dict)
     """
-    mapping_config = ACTIONS_MAPPING_CONFIG.get(component_id) or \
-                     ACTIONS_MAPPING_CONFIG.get(DEFAULT_CONFIG_KEY)
-
     coco_standard_response = copy.deepcopy(COCO_STANDARD_RESPONSE)
 
     results = houndify_json_response.get("AllResults")
@@ -50,6 +88,9 @@ def handle(component_id, houndify_json_response, response_time_seconds=0.0):
 
         written_response = results[0]["WrittenResponse"] or\
                                              results[0]["WrittenResponseLong"]
+
+        status_flags = calculate_status_flags(results[0].get("Result", {}))
+        coco_standard_response.update(status_flags)
 
     else:
         action_name = houndify_json_response.get("CommandKind")
@@ -64,14 +105,5 @@ def handle(component_id, houndify_json_response, response_time_seconds=0.0):
     coco_standard_response["response_time"] = response_time_seconds
 
     coco_standard_response["confidence"] = 1.0  # Default.
-
-    coco_standard_response["component_done"] = \
-        (mapping_config.get("COMPLETE_ACTION") == action_name)
-
-    coco_standard_response["component_failed"] = \
-        (mapping_config.get("FAILED_ACTION") == action_name)
-
-    coco_standard_response["out_of_context"] = \
-        (mapping_config.get("OUT_OF_CONTEXT_ACTION") == action_name)
 
     return coco_standard_response
