@@ -8,7 +8,6 @@ import json
 import uuid
 import os
 
-from .custom_exceptions import HoundifyLoadComponentError
 
 HOUNDIFY_BASE_TEXT_API = "https://api.houndify.com/v1/text"
 COMPONENTS_FOLDER_NAME = "components"
@@ -29,7 +28,7 @@ def _build_client_config_path(component_id):
     return f"{components_folder_name}/{component_id}.json"
 
 
-def _load_client_config(component_id):
+def load_component_config(component_id):
     """
     Fetch service account json content.
 
@@ -46,7 +45,7 @@ def _load_client_config(component_id):
     if not os.path.isfile(config_file_path):
         error_message = f"Component with ID: {component_id} does not exist."
         logging.error(error_message)
-        raise HoundifyLoadComponentError(error_message)
+        raise Exception(error_message)
 
     with open(config_file_path, "rb") as f:
         return json.loads(f.read())
@@ -99,7 +98,7 @@ def process_request(component_id, session_id, text, language_code="en"):
     Returns:
         Houndify JSON response. (dict)
     """
-    client_config = _load_client_config(component_id)
+    client_config = load_component_config(component_id)
 
     client_id = client_config["client_id"]
     client_key = client_config["client_key"]

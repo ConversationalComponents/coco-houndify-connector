@@ -1,0 +1,37 @@
+{
+  "client_id": "HgeXsGNrjqVzkFXRf5tYCg==",
+  "client_key": "WIlLofRVLrtTrE6PWSmnaPSXkM4a0990DYPw-widLfCp6B99HWlKj-vQg7TG1BVlHuUy9RAUX7rYDynQ2Vxw_A==",
+  "flow": [
+    {
+        "push-forward": "It’s seafood season at Noma and our menu is a celebration of Scandinavian seafood with the entire menu based on… can you guess?",
+        "intents": {
+            "*": ""
+        }
+    },
+    {
+        "push-forward": "It’s an epicurean delight from acclaimed chef Rene Redzepi that has earned us two Michelin stars! Have you eaten here before?",
+        "intents": {
+            "*": "LOL, no, silly. Seafood.",
+            "chicken": ""
+        }
+    },
+    {
+        "push-forward": "We’re known for our reinvention and interpretation of traditional Nordic Cuisine. You know what Noma means?",
+        "intents": {
+            "no": "You're in for a treat, ",
+            "chicken": ""
+        }
+    },
+    {
+        "push-forward": "Are you ready to go crazy over our seafood? Why am I even asking? Of course you're ready!",
+        "intents": {
+            "wh": "It’s a portmanteau of two Danish words \"nordisk\" (Nordic) and \"mad\" (food). ",
+            "yes": "You're right. Mad food. ",
+            "*": ""
+        }
+    }
+]
+}
+
+
+

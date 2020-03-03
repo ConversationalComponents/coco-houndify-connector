@@ -64,44 +64,29 @@ def calculate_status_flags(json_result):
 
 
 # functions
-def handle(component_id, houndify_json_response, response_time_seconds=0.0):
-    """
-    Receives a Houndify JSON result and formats it to a standard CoCo
-    component response format.
-
-    Arguments:
-        component_id (string): Target Houndify component ID, client config file
-        path.
-        houndify_json_response (dict): Houndify JSON response.
-        response_time_seconds (float): The time between the request and when
-        the response was received.
-
-    Returns:
-        Result in a CoCo standard format. (dict)
-    """
+def handle(session_turn, houndify_json_response, last_response, response_time_seconds=0.0):
     coco_standard_response = copy.deepcopy(COCO_STANDARD_RESPONSE)
 
     results = houndify_json_response.get("AllResults")
 
-    if results:
-        action_name = results[0]["CommandKind"]
+    result = results[0]
 
-        written_response = results[0]["WrittenResponse"] or\
-                                             results[0]["WrittenResponseLong"]
-
-        status_flags = calculate_status_flags(results[0].get("Result", {}))
-        coco_standard_response.update(status_flags)
-
+    if not result.get("Result"):
+        intent = "*"
     else:
-        action_name = houndify_json_response.get("CommandKind")
-        written_response = houndify_json_response.get("WrittenResponse") or\
-                           houndify_json_response.get("WrittenResponseLong")
+        intent = result.get("Result").get("action", "*")
 
-        if not action_name and written_response:
-            raise ResponseHandlerException("No results received.")
+    if last_response:
+        coco_standard_response["component_done"] = True
 
-    coco_standard_response["action_name"] = action_name
-    coco_standard_response["response"] = written_response
+    coco_standard_response["action_name"] = intent
+
+    raw_intent_response = session_turn.get('intents').get(intent)
+    intent_response = f"{raw_intent_response} ," if raw_intent_response else ""
+
+    coco_standard_response["response"] = f"{intent_response} " \
+                                         f"{session_turn.get('push-forward')}."
+
     coco_standard_response["response_time"] = response_time_seconds
 
     coco_standard_response["confidence"] = 1.0  # Default.
